@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:nhsurveys_feedback/models/question.dart';
+import 'package:nhsurveys_feedback/utils/constant.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
@@ -125,6 +126,54 @@ class AuthProvider with ChangeNotifier {
 
     return result;
   }
+
+  Future<bool> sendResponseToServer(String name, String mobile, String answer_ids, String response_rating, String rating, String comment, String device_id, String device_name) async {
+    final url = "$api/register";
+
+    Map<String, String> body = {
+      'name': name,
+      'mobile': mobile,
+      'answer_ids': answer_ids,
+      'response_rating': response_rating,
+      'rating': rating,
+      'comment': comment,
+      'device_id': device_id,
+      'device_name': device_name
+    };
+    print(body);
+    Map<String, dynamic> result = {
+      "success": false,
+      "message": 'Unknown error.'
+    };
+
+    final response = await http.post("http://10.0.2.2/nhsurveys/api/v1/submit_response", body: body,headers: {
+              'Accept': 'application/json',
+              "api-key": Constant.api_key,
+              "user-login-key": token});
+  
+
+    if (response.statusCode == 200) {
+      Map<String, dynamic> apiResponse = json.decode(utf8.decode(response.bodyBytes));
+      _status = Status.Authenticated;
+      print(apiResponse);
+      //print(getToken());
+      notifyListeners();
+      return true;
+    }
+
+    if (response.statusCode == 401) {
+      _status = Status.Unauthenticated;
+      _notification = NotificationText('Invalid email or password.');
+      notifyListeners();
+      return false;
+    }
+
+    _status = Status.Unauthenticated;
+    _notification = NotificationText('Server error.');
+    notifyListeners();
+    return false;
+  }
+
 
   Future<List<Question>> initApplication() async {
     List<Question> list = List();

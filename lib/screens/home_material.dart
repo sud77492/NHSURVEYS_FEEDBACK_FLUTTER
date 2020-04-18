@@ -140,8 +140,6 @@ class _HomeMaterialState extends State<HomeMaterial> {
   Future navigateToSubPage(BuildContext context) async {
     name = textFieldController.text;
     mobile = textFieldController2.text;
-    print(mobile);
-    print(name);
     
     Navigator.push(context, MaterialPageRoute<void>(builder: (context) => HomeCupertino(name:name, mobile:mobile)));
   }

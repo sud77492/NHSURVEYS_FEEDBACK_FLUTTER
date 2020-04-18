@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:nhsurveys_feedback/screens/home_cupertino.dart';
+import 'package:nhsurveys_feedback/screens/home_material.dart';
 import 'package:provider/provider.dart';
 import 'package:nhsurveys_feedback/providers/auth.dart';
 import 'package:nhsurveys_feedback/models/question.dart';
@@ -9,14 +10,37 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 
 class HomeStar extends StatefulWidget {
+  final String name;
+  final String mobile;
+  final String response;
+  final String response_id;
+
+  // receive data from the FirstScreen as a parameter
+  HomeStar({Key key, @required this.name, @required this.mobile, @required this.response, @required this.response_id}) : super(key: key);
+ 
   @override
   _HomeStarState createState() => _HomeStarState();
+  
 }
 
 class _HomeStarState extends State<HomeStar> {
   final _formKey = GlobalKey<FormState>();
   List<Question> list = List();
   double rating = 0.0;
+  TextEditingController textFieldController = TextEditingController();
+
+  Future<void> submitResponse() async {
+    final form = _formKey.currentState;
+    if (form.validate()) {
+      
+
+      print(widget.name);
+      print(widget.mobile);
+      print(widget.response);
+      print(widget.response_id);
+      await Provider.of<AuthProvider>(context).sendResponseToServer(widget.name, widget.mobile, widget.response_id, widget.response, rating.toString(), textFieldController.text, "sfdnfads", "A50s");
+    }
+  }
 
   @override
   void initState() {
@@ -69,6 +93,7 @@ class _HomeStarState extends State<HomeStar> {
                           Container(
                             margin: const EdgeInsets.only(top: 20.0),
                             child : TextFormField(
+                              controller: textFieldController,
                               decoration: new InputDecoration(
                               contentPadding: new EdgeInsets.symmetric(vertical: 50.0, horizontal: 10.0),
                               border: new OutlineInputBorder(
@@ -86,8 +111,8 @@ class _HomeStarState extends State<HomeStar> {
                               color: Color.fromRGBO(255,20,147, 1),
                               child: RaisedButton(
                                   onPressed: () {
-                                    //_fetchData();
-                                    //navigateToSubPage(context);
+                                    submitResponse();
+                                    navigateToSubPage(context);
                                   },
                                   textColor: Color.fromRGBO(255,255,255, 1),
                                   color: Color.fromRGBO(255,20,147, 1),
@@ -96,7 +121,7 @@ class _HomeStarState extends State<HomeStar> {
   }
 
   Future navigateToSubPage(BuildContext context) async {
-    Navigator.push(context, MaterialPageRoute<void>(builder: (context) => HomeCupertino()));
+    Navigator.push(context, MaterialPageRoute<void>(builder: (context) => HomeMaterial()));
   }
 
   void _showDialog(BuildContext context) {

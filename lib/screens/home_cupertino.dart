@@ -54,6 +54,7 @@ class _HomeCupertinoState extends State<HomeCupertino> {
 
     print(count);
     print(list.length);
+    response_list.clear();
   }
 
   @override
@@ -108,7 +109,8 @@ class _HomeCupertinoState extends State<HomeCupertino> {
                                     if(count < 7){
                                       responseData = ResponseData(list[count].question_id, 5, list[count].options[0].option_id);
                                       response_list.add(responseData);
-                                      print(response_list[0].question_id);
+                                      print("Ques ID : "+response_list[count].response_id.toString());
+                                      print("List Length :"+response_list.length.toString());
                                       //responseData = ResponseData(question_id, response, response_id)
                                       count = count + 1;
                                     }else{
@@ -134,7 +136,8 @@ class _HomeCupertinoState extends State<HomeCupertino> {
                                   if(count < 7){
                                     responseData = ResponseData(list[count].question_id, 4, list[count].options[1].option_id);
                                     response_list.add(responseData);
-                                    print(response_list[0].question_id);
+                                    print("Ques ID : "+response_list[count].response_id.toString());
+                                    print("List Length :"+response_list.length.toString());
                                     count = count + 1;
                                   }else{
                                     navigateToSubPage(context);
@@ -160,8 +163,8 @@ class _HomeCupertinoState extends State<HomeCupertino> {
                                   if(count < 7){
                                     responseData = ResponseData(list[count].question_id, 3, list[count].options[2].option_id);
                                     response_list.add(responseData);
-                                    print(response_list[2].question_id);
-                                    print(response_list.length);
+                                    print("Ques ID : "+response_list[count].response_id.toString());
+                                    print("List Length :"+response_list.length.toString());
                                     count = count + 1;
                                   }else{
                                     navigateToSubPage(context);
@@ -228,7 +231,21 @@ class _HomeCupertinoState extends State<HomeCupertino> {
   }
 
   Future navigateToSubPage(BuildContext context) async {
-    Navigator.push(context, MaterialPageRoute<void>(builder: (context) => HomeStar()));
+    String response;
+    String response_id;
+    for (int i = 0; i < response_list.length; i++) {
+      if(i == 0) {
+        response_id = response_list[i].response_id.toString();
+        response = response_list[i].response.toString();
+      }else{
+        response_id = response_id + "," + response_list[i].response_id.toString();
+        response = response + "," + response_list[i].response.toString();
+      }
+      
+
+    }
+
+    Navigator.push(context, MaterialPageRoute<void>(builder: (context) => HomeStar(name: widget.name, mobile: widget.mobile, response: response, response_id: response_id)));
   }
 
   void _showDialog() {
